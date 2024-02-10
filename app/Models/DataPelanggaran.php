@@ -22,6 +22,7 @@ class DataPelanggaran extends Model
         'tanggal',
         'id_kelas',
         'created_by',
+        'keterangan'
     ];
 
     protected $hidden = [];
