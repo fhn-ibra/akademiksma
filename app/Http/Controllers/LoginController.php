@@ -42,7 +42,7 @@ class LoginController extends Controller
                 return redirect()->route('dashboard-guru');
             }
         }
-        return redirect()->route('login');
+        return redirect()->route('login')->with(['error' => true]);
     }
 
     public function logout(Request $request) {
