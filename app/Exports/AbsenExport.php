@@ -3,67 +3,37 @@
 namespace App\Exports;
 
 use App\Models\Absensi;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use App\Http\Controllers\GuruController;
 
-class AbsenExport implements FromCollection, withHeadings, ShouldAutoSize
+class AbsenExport implements FromVIew, ShouldAutoSize
 {
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    // public function collection()
-    // {
-    //     return collect(GuruController::export());
-    //     // return Kelas::all();
-    // }
+    protected $id, $filter, $sampai, $dari;
 
-    protected $data;
-
-    public function __construct($data)
+    public function __construct($id, $dari, $sampai, $filter)
     {
-        $this->data = $data;
+        $this->id = $id;
+        $this->dari = $dari;
+        $this->sampai = $sampai;
+        $this->filter = $filter;
     }
 
-    public function collection()
+    public function view(): View
     {
-        // $absen = $this->data['absen'];
-        // $siswa = $this->data['siswa'];
-        // $kelas_id = $this->data['kelas_id'];
-        // $request = $this->data['request'];
-        // $persentasi_kehadiran = $this->data['persentasi_kehadiran'];
+        if($this->dari != null || $this->sampai != null){
+            if($this->filter == null) {
+                $absen = Absensi::where('id_kelas', $this->id)->whereBetween('tanggal', [$this->dari, $this->sampai])->get();
+            } else {
+                $absen = Absensi::where('id_kelas', $this->id)->whereBetween('tanggal', [$this->dari, $this->sampai])->where('status', $this->filter)->get();
+            }
+        } else {
+            $absen = Absensi::where('id_kelas', $this->id)->get();
+        }
 
-        // $collection = [];
-
-        // foreach ($absen as $key => $value) {
-        //     $siswaData = isset($siswa[$value->siswa_id]) ? $siswa[$value->siswa_id] : null;
-
-        //     if ($siswaData) {
-        //         $collection[] = [
-        //             $key + 1,  // Nomor
-        //             $siswaData->nisn,  // NISN
-        //             $siswaData->nama,  // Nama Siswa
-        //             $value->status,  // Status
-        //             $value->keterangan,  // Keterangan
-        //             $value->tanggal,  // Tanggal
-        //         ];
-        //     }
-        // }
-
-        return $this->data;
+        return view('export.absen', [
+            'absen' => $absen
+        ]);
     }
 
-    public function headings(): array
-    {
-        return [
-            'Nomor',
-            'NISN',
-            'Nama Siswa',
-            'Nama Kelas',
-            'Status',
-            'Keterangan',
-            'Tanggal',
-        ];
-    }
 }
