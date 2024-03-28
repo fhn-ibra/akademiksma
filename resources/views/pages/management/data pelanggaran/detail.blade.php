@@ -4,7 +4,14 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="mb-0">Data Pelanggaran</h1>
-            <a href="{{ url('excel-export-pelanggaran') }}" class="btn btn-sm btn-success">Export Data</a>
+            <form action="{{ url('excel-export-pelanggaran') }}" method="get">
+                <input type="hidden" name="from" value="{{ $request->input('date_from') }}">
+                <input type="hidden" name="to" value="{{ $request->input('date_to') }}">
+                <input type="hidden" name="search" value="{{ $request->input('search') }}">
+            <button type="submit" class="btn btn-sm btn-success">Export Data</button>
+            </form>
+
+
         </div>
         <form action="" method="get">
             <div class="row mb-3">

@@ -115,8 +115,9 @@ class DataPelanggaranController extends Controller
         return view('pages.management.data pelanggaran.detail', compact('siswa', 'filteredSiswa', 'request'));
     }
 
-    public static function export()
+    public static function export(Request $request)
     {
-        return Excel::download(new PelanggaranExport, 'data_pelanggaran.xlsx');
+        $pelanggaran = new PelanggaranExport($request->from, $request->to, $request->search);
+        return Excel::download($pelanggaran, 'data_pelanggaran.xlsx');
     }
 }
